@@ -28,6 +28,14 @@ public class RandomResizer {
   public RandomResizer() {
     LOGGER.debug("Random Resizer Loaded!");
     ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, RandomResizerConfig.CLIENT_SPEC);
+    if (RandomResizerConfig.min_scale > RandomResizerConfig.mid_min_scale) {
+      RandomResizerConfig.min_scale = RandomResizerConfig.mid_min_scale;
+      LOGGER.error("Config Error. Set smaller \"min_scale\" than \"mid_min_scale\"");
+    }
+    if (RandomResizerConfig.max_scale < RandomResizerConfig.mid_max_scale) {
+      RandomResizerConfig.max_scale = RandomResizerConfig.mid_max_scale;
+      LOGGER.error("Config Error. Set larger \"max_scale\" than \"mid_max_scale\"");
+    }
   }
 
   @SubscribeEvent
@@ -41,7 +49,19 @@ public class RandomResizer {
       ScoreObjective objective = scoreboard.getObjective(SCORE_NAME);
       if (!scoreboard.entityHasObjective(id, objective)) {
         Score score = scoreboard.getOrCreateScore(id, objective);
-        score.setScorePoints(rand.nextInt((int) (RandomResizerConfig.max_scale - RandomResizerConfig.min_scale) * 10 + 1) + (int) RandomResizerConfig.min_scale * 10);
+        int p = rand.nextInt(100);
+        int scaleScore;
+        if (p < 40) {
+          scaleScore = rand.nextInt((int) ((1.0 - RandomResizerConfig.min_scale) * 10 + 1)) + (int) (RandomResizerConfig.min_scale * 10);
+          LOGGER.debug(event.getEntity() + " min-scale: " + scaleScore / 10.0f);
+        } else if (p < 60) {
+          scaleScore = rand.nextInt((int) ((RandomResizerConfig.mid_max_scale - RandomResizerConfig.mid_min_scale) * 10 + 1)) + (int) (RandomResizerConfig.mid_min_scale * 10);
+          LOGGER.debug(event.getEntity() + " mid-scale: " + scaleScore / 10.0f);
+        } else {
+          scaleScore = rand.nextInt((int) ((RandomResizerConfig.max_scale - 1.0) * 10 + 1)) + 10;
+          LOGGER.debug(event.getEntity() + " max-scale: " + scaleScore / 10.0f);
+        }
+        score.setScorePoints(scaleScore);
       }
       float scale = scoreboard.getOrCreateScore(id, objective).getScorePoints() / 10.0f;
       event.getMatrixStack().scale(scale, scale, scale);

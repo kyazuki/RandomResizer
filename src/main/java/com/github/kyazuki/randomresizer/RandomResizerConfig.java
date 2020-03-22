@@ -18,6 +18,8 @@ public class RandomResizerConfig {
   }
 
   public static double min_scale;
+  public static double mid_min_scale;
+  public static double mid_max_scale;
   public static double max_scale;
 
   @SubscribeEvent
@@ -29,12 +31,16 @@ public class RandomResizerConfig {
 
   public static void bakeConfig() {
     min_scale = CLIENT.min_scale.get();
+    mid_min_scale = CLIENT.mid_min_scale.get();
+    mid_max_scale = CLIENT.mid_max_scale.get();
     max_scale = CLIENT.max_scale.get();
   }
 
   public static class ClientConfig {
 
     public final ForgeConfigSpec.DoubleValue min_scale;
+    public final ForgeConfigSpec.DoubleValue mid_min_scale;
+    public final ForgeConfigSpec.DoubleValue mid_max_scale;
     public final ForgeConfigSpec.DoubleValue max_scale;
 
     public ClientConfig(ForgeConfigSpec.Builder builder) {
@@ -43,10 +49,18 @@ public class RandomResizerConfig {
               .comment("Minimum scale value.")
               .translation(RandomResizer.MODID + ".config." + "min_scale")
               .defineInRange("min_scale", 0.5, 0.0, 1000.0);
+      mid_min_scale = builder
+              .comment("Mid-Minimum scale value.")
+              .translation(RandomResizer.MODID + ".config." + "mid_min_scale")
+              .defineInRange("mid_min_scale", 0.8, 0.0, 1000.0);
+      mid_max_scale = builder
+              .comment("Mid-Maximum scale value.")
+              .translation(RandomResizer.MODID + ".config." + "mid_max_scale")
+              .defineInRange("mid_max_scale", 1.5, 1.0, 1000.0);
       max_scale = builder
               .comment("Maximum scale value.")
               .translation(RandomResizer.MODID + ".config." + "max_scale")
-              .defineInRange("max_scale", 3.0, 0.0, 1000.0);
+              .defineInRange("max_scale", 3.0, 1.0, 1000.0);
       builder.pop();
     }
   }
