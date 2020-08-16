@@ -8,13 +8,13 @@ import org.apache.commons.lang3.tuple.Pair;
 
 @Mod.EventBusSubscriber(modid = RandomResizer.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class RandomResizerConfig {
-  public static final ClientConfig CLIENT;
-  public static final ForgeConfigSpec CLIENT_SPEC;
+  public static final CommonConfig COMMON;
+  public static final ForgeConfigSpec COMMON_SPEC;
 
   static {
-    final Pair<ClientConfig, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(ClientConfig::new);
-    CLIENT_SPEC = specPair.getRight();
-    CLIENT = specPair.getLeft();
+    final Pair<CommonConfig, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(CommonConfig::new);
+    COMMON_SPEC = specPair.getRight();
+    COMMON = specPair.getLeft();
   }
 
   public static double min_scale;
@@ -24,26 +24,26 @@ public class RandomResizerConfig {
 
   @SubscribeEvent
   public static void onModConfigEvent(final ModConfig.ModConfigEvent configEvent) {
-    if (configEvent.getConfig().getSpec() == RandomResizerConfig.CLIENT_SPEC) {
+    if (configEvent.getConfig().getSpec() == RandomResizerConfig.COMMON_SPEC) {
       bakeConfig();
     }
   }
 
   public static void bakeConfig() {
-    min_scale = CLIENT.min_scale.get();
-    mid_min_scale = CLIENT.mid_min_scale.get();
-    mid_max_scale = CLIENT.mid_max_scale.get();
-    max_scale = CLIENT.max_scale.get();
+    min_scale = COMMON.min_scale.get();
+    mid_min_scale = COMMON.mid_min_scale.get();
+    mid_max_scale = COMMON.mid_max_scale.get();
+    max_scale = COMMON.max_scale.get();
   }
 
-  public static class ClientConfig {
+  public static class CommonConfig {
 
     public final ForgeConfigSpec.DoubleValue min_scale;
     public final ForgeConfigSpec.DoubleValue mid_min_scale;
     public final ForgeConfigSpec.DoubleValue mid_max_scale;
     public final ForgeConfigSpec.DoubleValue max_scale;
 
-    public ClientConfig(ForgeConfigSpec.Builder builder) {
+    public CommonConfig(ForgeConfigSpec.Builder builder) {
       builder.push("RandomResizer Config");
       min_scale = builder
               .comment("Minimum scale value.")
